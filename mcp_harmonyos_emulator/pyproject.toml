@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "karmar paugh", email = "xbyb26@gmail.com"}
 ]
 keywords = ["mcp", "harmonyos", "emulator", "model-context-protocol"]
 classifiers = [
@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp>=0.8.0",
 ]
 
 [project.optional-dependencies]
@@ -33,9 +33,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/mcp-harmonyos-emulator"
-Repository = "https://github.com/yourusername/mcp-harmonyos-emulator"
-Issues = "https://github.com/yourusername/mcp-harmonyos-emulator/issues"
+Homepage = "https://github.com/xbyb26/emu-mcp"
+Repository = "https://github.com/xbyb26/emu-mcp"
+Issues = "https://github.com/xbyb26/emu-mcp"
 
 [project.scripts]
 mcp-harmonyos-emulator = "mcp_harmonyos_emulator:main"

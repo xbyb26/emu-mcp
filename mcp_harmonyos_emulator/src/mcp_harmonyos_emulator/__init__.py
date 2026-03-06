@@ -16,8 +16,6 @@ mcp = FastMCP("harmonyos_emulator_mcp")
 # Constants
 EMULATOR_CMD = "Emulator"
 HDC_CMD = "hdc"
-DEFAULT_DEVICE_MODEL = "Mate 80 Pro Max"
-
 
 def _check_command_exists(command: str) -> bool:
     """Check if a command exists in the system PATH."""

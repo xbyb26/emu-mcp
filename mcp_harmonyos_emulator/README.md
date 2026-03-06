@@ -13,29 +13,34 @@ MCP server for managing HarmonyOS emulator instances, enabling agents to start, 
 ### Standard Installation
 
 ```bash
-pip install mcp-harmonyos-emulator
+pip install mcp-harmonyos-emulator==1.0.0
 ```
 
-### Manual Configuration for MCP Clients
+### OpenCode Configuration
 
-Add the following entry to your MCP client configuration (e.g., `cline_mcp_settings.json`):
+Add the following entry to your OpenCode configuration file:
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "harmonyos-emulator": {
-      "command": "python",
-      "args": ["-m", "mcp_harmonyos_emulator"],
-      "env": {
+      "type": "stdio",
+      "command": [
+        "uvx",
+        "--index-url", "https://test.pypi.org/simple/",
+        "--extra-index-url", "https://pypi.org/simple/",
+        "mcp-harmonyos-emulator==1.0.0"
+      ],
+      "enabled": true,
+      "environment": {
         "instancePath": "/path/to/emulator/instance",
         "imageRoot": "/path/to/emulator/images"
-      },
-      "disabled": false,
-      "autoApprove": []
+      }
     }
-  }
-}
 ```
+
+This configuration uses `uvx` to automatically download and run the package from Test PyPI.
 
 ## Environment Variables
 
