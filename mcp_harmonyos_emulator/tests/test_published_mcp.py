@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test MCP server using JSON-RPC protocol."""
+"""Test published MCP server from TestPyPI using JSON-RPC protocol."""
 
 import subprocess
 import json
@@ -10,7 +10,8 @@ import os
 os.environ["instancePath"] = "/Users/emu/.Huawei/Emulator/deployed"
 os.environ["imageRoot"] = "/Users/emu/Library/Huawei/Sdk"
 
-def send_request(process, request):
+
+def send_request(processed, request):
     """Send a JSON-RPC request and get response."""
     request_str = json.dumps(request) + "\n"
     process.stdin.write(request_str)
@@ -25,11 +26,18 @@ def send_request(process, request):
 
 
 def main():
-    print("🚀 Starting MCP server...")
+    print("🚀 Starting MCP server from TestPyPI (v1.0.3)...")
 
-    # Start MCP server as subprocess
+    # Start MCP server from TestPyPI as subprocess
     process = subprocess.Popen(
-        ["uvx", "--with-editable", ".", "mcp-harmonyos-emulator"],
+        [
+            "uvx",
+            "--index-url",
+            "https://test.pypi.org/simple/",
+            "--extra-index-url",
+            "https://pypi.org/simple/",
+            "mcp-harmonyos-emulator==1.0.3",
+        ],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -40,9 +48,16 @@ def main():
     # Wait for server to initialize
     import time
 
-    time.sleep(3)
+    time.sleep(5)
 
-    print("✅ MCP server started")
+    # Check if server is still running
+    if process.poll() is not None:
+        stderr_output = process.stderr.read()
+        print(f"❌ Server failed to start!")
+        print(f"stderr: {stderr_output}")
+        return
+
+    print("✅ MCP server started from (TestPyPI)")
 
     # Initialize connection
     init_request = {
@@ -57,8 +72,14 @@ def main():
     }
 
     print("\n📤 Sending initialize request...")
-    response = send_request(process, init_request)
-    print(f"📥 Initialize response: {json.dumps(response, indent=2)}")
+    try:
+        response = send_request(process, init_request)
+        print(f"📥 Initialize response: {json.dumps(response, indent=2)}")
+    except Exception as e:
+        print(f"❌ Error sending initialize request: {e}")
+        stderr_output = process.stderr.read()
+        print(f"stderr: {stderr_output}")
+        return
 
     # List tools
     list_tools_request = {
@@ -71,6 +92,21 @@ def main():
     print("\n📤 Listing available tools...")
     response = send_request(process, list_tools_request)
     print(f"📥 Tools list: {json.dumps(response, indent=2)}")
+
+    # Test list_emulator_devices
+    list_devices_request = {
+        "jsonrpc": "2.0",
+        "id": 5,
+        "method": "tools/call",
+        "params": {
+            "name": "list_emulator_devices",
+            "arguments": {},
+        },
+    }
+
+    print("\n📤 Listing emulator devices...")
+    response = send_request(process, list_devices_request)
+    print(f"📥 List devices response: {json.dumps(response, indent=2)}")
 
     # Test start_emulator
     start_request = {

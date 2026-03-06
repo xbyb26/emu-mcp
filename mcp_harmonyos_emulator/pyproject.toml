@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcp-harmonyos-emulator"
-version = "0.1.0"
+version = "1.0.3"
 description = "MCP server for HarmonyOS emulator management"
 readme = "README.md"
 requires-python = ">=3.10"

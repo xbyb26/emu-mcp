@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "harmonyos-emulator": {
+      "type": "stdio",
+      "command": [
+        "uvx",
+        "--index-url", "https://test.pypi.org/simple/",
+        "--extra-index-url", "https://pypi.org/simple/",
+        "mcp-harmonyos-emulator==1.0.3"
+      ],
+      "enabled": true,
+      "environment": {
+        "instancePath": "/path/to/emulator/instance",
+        "imageRoot": "/path/to/emulator/images"
+      }
+    }
+  }
+}

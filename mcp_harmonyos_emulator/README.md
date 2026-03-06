@@ -13,7 +13,7 @@ MCP server for managing HarmonyOS emulator instances, enabling agents to start, 
 ### Standard Installation
 
 ```bash
-pip install mcp-harmonyos-emulator==1.0.0
+pip install mcp-harmonyos-emulator
 ```
 
 ### OpenCode Configuration

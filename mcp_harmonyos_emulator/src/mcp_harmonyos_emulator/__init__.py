@@ -47,6 +47,67 @@ def _check_environment_variables() -> tuple[bool, Optional[str]]:
 
     return True, None
 
+@mcp.tool(
+    name="list_emulator_devices",
+    annotations={
+        "title": "List Available Emulator Devices",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": True
+    }
+)
+async def list_emulator_devices() -> str:
+    '''List available HarmonyOS emulator devices.
+
+    This tool queries available emulator device models using Emulator -list command.
+    Returns a list of device models that can be used with start_emulator.
+
+    Returns:
+        str: List of available device models or error message
+
+    Examples:
+        - Use when: "What emulator devices are available?"
+        - Use when: "List available device models before starting emulator"
+        - Don't use when: You already know the device model name
+
+    Error Handling:
+        - Returns error if Emulator command is not found in PATH
+        - Returns error if list command fails
+    '''
+    try:
+        # Check if Emulator command exists
+        if not _check_command_exists(EMULATOR_CMD):
+            return f"Error: {EMULATOR_CMD} command not found. Please ensure HarmonyOS SDK is installed and in PATH"
+
+        # Build the list command
+        cmd = [EMULATOR_CMD, "-list"]
+
+        # Execute the list command
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if result.returncode == 0:
+            devices = result.stdout.strip()
+            if devices:
+                device_list = devices.split('\n')
+                return f"Available emulator devices:\n" + '\n'.join([f"  {i+1}. {device}" for i, device in enumerate(device_list)])
+            else:
+                return "No emulator devices found. Please install emulator images first."
+        else:
+            error_msg = result.stderr.strip() if result.stderr.strip() else result.stdout.strip()
+            return f"Error: Failed to list emulator devices. {error_msg}"
+
+    except subprocess.TimeoutExpired:
+        return "Error: List command timed out"
+    except Exception as e:
+        return f"Error: Unexpected error occurred while listing devices: {type(e).__name__}: {str(e)}"
+
+
 
 @mcp.tool(
     name="start_emulator",
@@ -265,7 +326,6 @@ async def install_app(app_path: str) -> str:
         return f"Error: Installation timed out for application '{app_path}'"
     except Exception as e:
         return f"Error: Unexpected error occurred while installing application: {type(e).__name__}: {str(e)}"
-
 
 def main():
     """Main entry point for the MCP server."""
